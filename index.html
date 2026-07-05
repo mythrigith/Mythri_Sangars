@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mythri Sangars — Software Engineer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --bg: #F2F4F2;
+    --bg-panel: #E7EBE7;
+    --ink: #141A19;
+    --ink-soft: #4B5654;
+    --copper: #B5651D;
+    --copper-bright: #D97F30;
+    --teal: #1D6B63;
+    --line: #C7CFC9;
+    --pad: #FFFFFF;
+    --mono: 'IBM Plex Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  a{ color:inherit; }
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 28px;
+    position:relative;
+  }
+
+  /* ---------- circuit trace ---------- */
+  #trace-svg{
+    position:absolute;
+    top:0; left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:0;
+    overflow:visible;
+  }
+  #trace-path{
+    fill:none;
+    stroke:var(--copper);
+    stroke-width:2;
+    stroke-linecap:round;
+    stroke-dasharray:1;
+    stroke-dashoffset:1;
+    opacity:0.55;
+  }
+  .pad{
+    fill:var(--bg);
+    stroke:var(--copper);
+    stroke-width:2;
+  }
+  .pad-core{ fill:var(--copper); }
+
+  @media (prefers-reduced-motion: no-preference){
+    #trace-path{ transition: stroke-dashoffset 0.1s linear; }
+  }
+
+  /* ---------- header / hero ---------- */
+  header{
+    padding:90px 0 70px;
+    position:relative;
+    z-index:1;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--teal);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    border-radius:50%;
+    background:var(--copper-bright);
+    box-shadow:0 0 0 3px rgba(181,101,29,0.18);
+    display:inline-block;
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(40px, 7vw, 64px);
+    letter-spacing:-0.01em;
+    line-height:1.02;
+    margin-bottom:18px;
+  }
+  h1 span{ color:var(--copper); }
+  .role-line{
+    font-family:var(--display);
+    font-size:clamp(17px, 2.4vw, 21px);
+    color:var(--ink-soft);
+    max-width:560px;
+    margin-bottom:34px;
+  }
+  .contact-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .contact-pill{
+    font-family:var(--mono);
+    font-size:12.5px;
+    padding:8px 14px;
+    background:var(--pad);
+    border:1px solid var(--line);
+    border-radius:3px;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    transition:border-color .18s ease, color .18s ease;
+  }
+  .contact-pill:hover{ border-color:var(--copper); color:var(--copper); }
+
+  /* ---------- sections generic ---------- */
+  section{
+    position:relative;
+    z-index:1;
+    padding:52px 0;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:34px;
+  }
+  .section-tag{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--copper);
+    letter-spacing:0.1em;
+    white-space:nowrap;
+  }
+  .section-title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:26px;
+  }
+  .section-rule{
+    flex:1;
+    height:1px;
+    background:var(--line);
+    transform:translateY(-4px);
+  }
+
+  /* ---------- summary ---------- */
+  .summary-text{
+    font-size:17px;
+    color:var(--ink-soft);
+    max-width:640px;
+    padding-left:26px;
+    border-left:2px solid var(--line);
+  }
+
+  /* ---------- experience ---------- */
+  .node{
+    display:grid;
+    grid-template-columns:20px 1fr;
+    gap:22px;
+    padding-bottom:8px;
+  }
+  .node-rail{
+    position:relative;
+    display:flex;
+    justify-content:center;
+  }
+  .node-rail::before{
+    content:"";
+    position:absolute;
+    top:6px; bottom:-18px;
+    width:1px;
+    background:var(--line);
+  }
+  .node:last-child .node-rail::before{ display:none; }
+  .node-dot{
+    width:11px; height:11px;
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--copper);
+    margin-top:5px;
+    flex-shrink:0;
+    z-index:1;
+  }
+  .node-body{ padding-bottom:34px; }
+  .node-top{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px 20px;
+    margin-bottom:6px;
+  }
+  .node-title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:18px;
+  }
+  .node-org{ color:var(--teal); font-weight:500; }
+  .node-meta{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .node-list{
+    margin-top:10px;
+    padding-left:18px;
+    color:var(--ink-soft);
+    font-size:15px;
+  }
+  .node-list li{ margin-bottom:6px; }
+  .node-list li::marker{ color:var(--copper); }
+
+  /* ---------- projects ---------- */
+  .proj-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:18px;
+  }
+  .proj-card{
+    background:var(--pad);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:24px 22px;
+    position:relative;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .proj-card:hover{
+    transform:translateY(-3px);
+    border-color:var(--copper);
+    box-shadow:0 10px 26px -14px rgba(20,26,25,0.25);
+  }
+  .proj-index{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--copper);
+    letter-spacing:0.1em;
+    margin-bottom:12px;
+    display:block;
+  }
+  .proj-title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:17px;
+    margin-bottom:10px;
+    line-height:1.3;
+  }
+  .proj-desc{
+    font-size:14.5px;
+    color:var(--ink-soft);
+    margin-bottom:16px;
+  }
+  .tag-row{ display:flex; flex-wrap:wrap; gap:6px; }
+  .tag{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:3px 9px;
+    border-radius:2px;
+    background:rgba(29,107,99,0.09);
+    color:var(--teal);
+    border:1px solid rgba(29,107,99,0.22);
+  }
+
+  /* ---------- skills ---------- */
+  .skill-board{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .skill-group{
+    background:var(--pad);
+    padding:22px;
+  }
+  .skill-group-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .skill-group-label::before{
+    content:"";
+    width:6px; height:6px;
+    background:var(--copper);
+    display:inline-block;
+    border-radius:1px;
+  }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    font-size:13.5px;
+    padding:5px 11px;
+    background:var(--bg-panel);
+    border-radius:3px;
+    color:var(--ink);
+  }
+
+  /* ---------- education ---------- */
+  .edu-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:20px;
+    padding:16px 0;
+    border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .edu-row:last-child{ border-bottom:none; }
+  .edu-name{ font-family:var(--display); font-weight:600; font-size:16px; }
+  .edu-org{ color:var(--ink-soft); font-size:14px; margin-top:3px; }
+  .edu-meta{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--ink-soft);
+    text-align:right;
+    white-space:nowrap;
+  }
+  .edu-meta strong{ color:var(--copper); display:block; font-size:13px; }
+
+  /* ---------- footer ---------- */
+  footer{
+    padding:70px 0 90px;
+    position:relative;
+    z-index:1;
+  }
+  .footer-card{
+    background:var(--ink);
+    color:var(--bg);
+    border-radius:8px;
+    padding:48px 40px;
+    text-align:center;
+  }
+  .footer-title{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:26px;
+    margin-bottom:12px;
+  }
+  .footer-sub{
+    color:#B9C2BF;
+    font-size:15px;
+    margin-bottom:26px;
+  }
+  .footer-links{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .footer-links a{
+    font-family:var(--mono);
+    font-size:12.5px;
+    padding:10px 18px;
+    border:1px solid rgba(242,244,242,0.25);
+    border-radius:3px;
+    text-decoration:none;
+    transition:background .18s ease, border-color .18s ease;
+  }
+  .footer-links a:hover{
+    background:var(--copper);
+    border-color:var(--copper);
+  }
+  .fine-print{
+    text-align:center;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:26px;
+  }
+
+  @media (max-width:600px){
+    header{ padding:60px 0 46px; }
+    section{ padding:38px 0; }
+    .edu-meta{ text-align:left; }
+    .footer-card{ padding:36px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<svg id="trace-svg" preserveAspectRatio="none">
+  <path id="trace-path" d=""></path>
+</svg>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Available for Software Engineer roles</div>
+    <h1>Mythri Sangars<span>.</span></h1>
+    <p class="role-line">Electronics engineer by training, full-stack developer by trade — building web applications with Angular and Spring Boot, and tinkering with IoT and telecom systems on the side.</p>
+    <div class="contact-row">
+      <a class="contact-pill" href="mailto:mythrisangrs@gmail.com">✉ mythrisangrs@gmail.com</a>
+      <a class="contact-pill" href="tel:+919490201870">☎ +91 94902 01870</a>
+      <a class="contact-pill" href="https://linkedin.com/in/mythri-sangars-0a4588219" target="_blank" rel="noopener">in/mythri-sangars</a>
+      <span class="contact-pill">📍 Hyderabad, India</span>
+    </div>
+  </header>
+
+  <section id="about">
+    <div class="section-head">
+      <span class="section-tag">01 · Summary</span>
+      <span class="section-title">About</span>
+      <span class="section-rule"></span>
+    </div>
+    <p class="summary-text">Electronics and Communication Engineering graduate with hands-on full-stack development experience gained through an internship at Mphasis. Solid foundation in C, Python, and Java, with strong analytical and problem-solving instincts sharpened across projects in computer vision, IoT, and telecom systems. Looking for an entry-level Software Engineer role to build scalable, real-world solutions.</p>
+  </section>
+
+  <section id="experience">
+    <div class="section-head">
+      <span class="section-tag">02 · Experience</span>
+      <span class="section-title">Where I've worked</span>
+      <span class="section-rule"></span>
+    </div>
+
+    <div class="node">
+      <div class="node-rail"><div class="node-dot"></div></div>
+      <div class="node-body">
+        <div class="node-top">
+          <div class="node-title">Associate Software Engineer Intern <span class="node-org">— Mphasis Ltd.</span></div>
+          <div class="node-meta">Jan 2026 – Apr 2026 · Chennai, India</div>
+        </div>
+        <ul class="node-list">
+          <li>Built and enhanced web application features using Angular as part of a hands-on internship project.</li>
+          <li>Trained in Java and Spring Boot, developing practical knowledge of backend and API development.</li>
+          <li>Used Git for version control and modern front-end tooling to build and maintain responsive applications.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="section-head">
+      <span class="section-tag">03 · Projects</span>
+      <span class="section-title">Things I've built</span>
+      <span class="section-rule"></span>
+    </div>
+
+    <div class="proj-grid">
+      <div class="proj-card">
+        <span class="proj-index">P.01</span>
+        <div class="proj-title">Road Sign Recognition &amp; Detection</div>
+        <p class="proj-desc">A computer-vision system that captures and classifies road signs in real time, giving live feedback to support safer driving.</p>
+        <div class="tag-row">
+          <span class="tag">Computer Vision</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <span class="proj-index">P.02</span>
+        <div class="proj-title">IoT-Based Smart Home Automation</div>
+        <p class="proj-desc">An IoT system that lets you remotely control and monitor home appliances through the Blynk mobile app.</p>
+        <div class="tag-row">
+          <span class="tag">IoT</span>
+          <span class="tag">Blynk</span>
+        </div>
+      </div>
+
+      <div class="proj-card">
+        <span class="proj-index">P.03</span>
+        <div class="proj-title">5G Small Cell Network — O-RAN Architecture</div>
+        <p class="proj-desc">Designed and studied a 5G small-cell network based on O-RAN Alliance standards to improve coverage, scalability, and low-latency communication.</p>
+        <div class="tag-row">
+          <span class="tag">Telecom</span>
+          <span class="tag">O-RAN</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="section-head">
+      <span class="section-tag">04 · Skills</span>
+      <span class="section-title">Toolkit</span>
+      <span class="section-rule"></span>
+    </div>
+
+    <div class="skill-board">
+      <div class="skill-group">
+        <div class="skill-group-label">Languages</div>
+        <div class="chip-row">
+          <span class="chip">C</span><span class="chip">Python</span><span class="chip">Java</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Frontend</div>
+        <div class="chip-row">
+          <span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span><span class="chip">Angular</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Backend &amp; Data</div>
+        <div class="chip-row">
+          <span class="chip">Spring Boot</span><span class="chip">SQL</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-label">Tools &amp; Practices</div>
+        <div class="chip-row">
+          <span class="chip">Git</span><span class="chip">SDLC</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="education">
+    <div class="section-head">
+      <span class="section-tag">05 · Education</span>
+      <span class="section-title">Academic background</span>
+      <span class="section-rule"></span>
+    </div>
+
+    <div class="edu-row">
+      <div>
+        <div class="edu-name">B.Tech, Electronics and Communication Engineering</div>
+        <div class="edu-org">Sreyas Institute of Engineering and Technology, Hyderabad</div>
+      </div>
+      <div class="edu-meta"><strong>GPA 8.45</strong>2026</div>
+    </div>
+    <div class="edu-row">
+      <div>
+        <div class="edu-name">Intermediate</div>
+        <div class="edu-org">Narayana Jr. College, Hyderabad</div>
+      </div>
+      <div class="edu-meta"><strong>88.2%</strong>2022</div>
+    </div>
+    <div class="edu-row">
+      <div>
+        <div class="edu-name">High School</div>
+        <div class="edu-org">Narayana High School, Hyderabad</div>
+      </div>
+      <div class="edu-meta"><strong>CGPA 10.0</strong>2020</div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-card">
+      <div class="footer-title">Let's build something together.</div>
+      <p class="footer-sub">Open to full-stack and entry-level software engineering roles.</p>
+      <div class="footer-links">
+        <a href="mailto:mythrisangrs@gmail.com">Email me</a>
+        <a href="https://linkedin.com/in/mythri-sangars-0a4588219" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="tel:+919490201870">Call</a>
+      </div>
+    </div>
+    <p class="fine-print">MYTHRI SANGARS · HYDERABAD, INDIA</p>
+  </footer>
+
+</div>
+
+<script>
+  // Build a single vertical trace line that runs behind the content,
+  // touching a "pad" at the top of each section — nodding to a PCB signal trace.
+  (function(){
+    const svg = document.getElementById('trace-svg');
+    const path = document.getElementById('trace-path');
+    const sections = document.querySelectorAll('header, section, footer');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function build(){
+      const wrap = document.querySelector('.wrap');
+      const wrapRect = wrap.getBoundingClientRect();
+      const scrollY = window.scrollY || window.pageYOffset;
+      const x = 4; // near the left edge of the wrap padding
+      let d = '';
+      const points = [];
+
+      sections.forEach((sec) => {
+        const r = sec.getBoundingClientRect();
+        const top = r.top + scrollY - wrapRect.top - scrollY + 4;
+        points.push(top);
+      });
+
+      const totalHeight = document.body.scrollHeight;
+      d = `M ${x} 0 L ${x} ${totalHeight}`;
+      path.setAttribute('d', d);
+
+      svg.setAttribute('viewBox', `0 0 ${wrapRect.width} ${totalHeight}`);
+      svg.setAttribute('width', wrapRect.width);
+      svg.setAttribute('height', totalHeight);
+
+      // remove old pads
+      svg.querySelectorAll('.pad, .pad-core').forEach(el => el.remove());
+      points.forEach(y => {
+        const pad = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        pad.setAttribute('cx', x); pad.setAttribute('cy', y); pad.setAttribute('r', 6);
+        pad.setAttribute('class','pad');
+        const core = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        core.setAttribute('cx', x); core.setAttribute('cy', y); core.setAttribute('r', 2.2);
+        core.setAttribute('class','pad-core');
+        svg.appendChild(pad); svg.appendChild(core);
+      });
+
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = len;
+      path.style.strokeDashoffset = reduceMotion ? 0 : len;
+    }
+
+    function onScroll(){
+      const len = path.getTotalLength();
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const scrolled = window.scrollY || window.pageYOffset;
+      const ratio = Math.min(1, Math.max(0, scrolled / docHeight));
+      path.style.strokeDashoffset = len * (1 - ratio);
+    }
+
+    window.addEventListener('resize', build);
+    window.addEventListener('load', () => { build(); if(!reduceMotion) onScroll(); });
+    if(!reduceMotion){ window.addEventListener('scroll', onScroll); }
+    build();
+  })();
+</script>
+
+</body>
+</html> 
+	◦	
+
+
+#Documents
